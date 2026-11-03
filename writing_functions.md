@@ -76,3 +76,105 @@ z_scores(c(TRUE, TRUE, FALSE, TRUE))
 
     ## Error in `z_scores()`:
     ## ! Input must be numeric
+
+## Multiple outputs
+
+``` r
+mean_and_sd = function(x) {
+  
+  if (!is.numeric(x)) {
+    stop("Input must be numeric")
+  }
+  
+  if (length(x) < 3) {
+    stop("Input must have at least three numbers")
+  }
+  
+  mean_x = mean(x)
+  sd_x = sd(x)
+  
+  tibble(
+    mean = mean_x,
+    sd = sd_x
+  )
+  
+}
+```
+
+Check that the function works.
+
+``` r
+x_vec = rnorm(1000)
+mean_and_sd(x_vec)
+```
+
+    ## # A tibble: 1 × 2
+    ##      mean    sd
+    ##     <dbl> <dbl>
+    ## 1 -0.0201  1.04
+
+## Multiple inputs
+
+``` r
+sim_data =
+  tibble(
+    x = rnorm(n = 100, mean = 4, sd = 3)
+  )
+
+sim_data |> 
+  summarize(
+    mean = mean(x),
+    sd = sd(x)
+  )
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  3.90  2.96
+
+``` r
+sim_mean_sd = function(samp_size, mu = 3, sigma = 3) {
+  
+  sim_data =
+    tibble(
+      x = rnorm(n = samp_size, mean = mu, sd = sigma)
+    )
+
+  sim_data |> 
+    summarize(
+      mean = mean(x),
+      sd = sd(x)
+  )
+  
+}
+
+sim_mean_sd(samp_size = 100, mu = 6, sigma = 3)
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  6.02  3.20
+
+``` r
+sim_mean_sd(100, 6, 3)
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  6.42  3.10
+
+``` r
+sim_mean_sd(samp_size = 100)
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  2.73  2.69
+
+It is recommended to use named matching (the first one), not positional
+(the second one). Set the default mu and sigma to 3. This will be what
+happens if you don’t input a new mu or sigma.
