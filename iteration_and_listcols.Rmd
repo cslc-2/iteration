@@ -231,6 +231,53 @@ nsduh_df |>
   facet_grid(. ~ drug)
 ```
 
+## Weather again??
+
+```{r}
+data("weather_df")
+
+weather_df =
+  weather_df |> 
+  nest(data = date:tmin)
+```
+
+Nest all the data cols into a list `data`.
+
+what if i want to do a regression of tmax on tmin for each station?
+
+```{r}
+lm(tmax ~ tmin, data = pull(weather_df, data)[[1]])
+```
+
+grab the data for just central park (the first table) and run a linear model.
+
+```{r}
+lm(tmax ~ tmin, data = pull(weather_df, data)[[2]])
+lm(tmax ~ tmin, data = pull(weather_df, data)[[3]])
+```
+
+Do the same for Molokai and Waterhole.
+
+```{r}
+weather_lm = function(input_data) {
+  
+  lm(tmax ~ tmin, data = input_data)
+  
+}
+
+weather_lm(pull(weather_df, data)[[1]])
+
+weather_df |> 
+  mutate(
+    lm_fits = map(data, weather_lm)
+  ) |> 
+  pull(lm_fits)
+```
+
+
+
+
+
 
 
 
