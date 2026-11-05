@@ -1,0 +1,118 @@
+---
+title: "Iteration and Listcols"
+author: "Christina Chen"
+date: "2026-11-05"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(p8105.datasets)
+
+source("source/mean_and_sd.R")
+source("source/nsduh_process.R")
+
+set.seed(1236)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## Lists...
+
+Prove that lists can have anything
+
+```{r}
+l = list(
+  vec_numeric = 5:17,
+  mat = matrix(1:8, nrow = 2, ncol = 4, byrow = TRUE),
+  vec_logical = c(TRUE),
+  summary_table = summary(rnorm(1000))
+)
+
+l
+
+l[[1]]
+l[[2]]
+l[["vec_logical"]]
+l$summary_table
+```
+
+* [[]] means you're pulling something out of a list. Can also do $.
+
+## `for` loops
+
+```{r}
+list_norm = list(
+  a = rnorm(20, 3, 4),
+  b = rnorm(20, -14, 20),
+  c = rnorm(20, 1000, 1000),
+  d = rnorm(20, 0, 1)
+)
+
+list_norm
+```
+
+can i get mean and sd for each sample
+
+```{r}
+mean_and_sd(list_norm[[1]])
+mean_and_sd(list_norm[[2]])
+mean_and_sd(list_norm[[3]])
+mean_and_sd(list_norm[[4]])
+```
+
+can i do this better?
+
+```{r}
+output = vector("list", length = 4)
+
+for (i in 1:4) {
+  
+  output[[i]] = mean_and_sd(list_norm[[i]])
+}
+
+output
+```
+
+## `map` instead
+
+This is better!
+
+```{r}
+output = map(list_norm, mean_and_sd)
+output = map(list_norm, median)
+```
+
+Regular map always gives a list. 
+
+what about map variants
+
+```{r}
+output = map_df(list_norm, mean_and_sd)
+output = map_dbl(list_norm, median)
+```
+
+
+
+
+
+
+
+
+
